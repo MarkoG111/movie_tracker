@@ -20,7 +20,7 @@ export function MovieHeader({
     const watchedCount = getWatchedIds().length;
 
     return (
-        <div className="bg-black/40 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
+        <div className="bg-black/40 backdrop-blur-xl border-b border-white/10 top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="py-6">
                     <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">

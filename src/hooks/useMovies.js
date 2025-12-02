@@ -9,8 +9,8 @@ export function useMovies(type) {
 
     useEffect(() => {
         const ids = type === "watched"
-            ? getWatchedIds().slice(0, 20)
-            : getToWatchIds().slice(0, 20);
+            ? getWatchedIds().slice(0, 18)
+            : getToWatchIds().slice(0, 18);
 
         console.log(ids);
 
