@@ -1,7 +1,15 @@
-const API_KEY = '27c8b7ac16a918ff00e8a298d9a5e3d7';
-const BASE_URL = 'https://api.themoviedb.org/3';
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
+
+// Cache za API odgovore - sprečava duple pozive
+const movieCache = new Map();
 
 export async function getMovieDetails(id) {
+    // Proveri cache prvo 
+    if (movieCache.has(id)) {
+        return movieCache.get(id);
+    }
+
     try {
         // Check if it's an IMDb ID (starts with "tt")
         if (typeof id === 'string' && id.startsWith('tt')) {
@@ -28,7 +36,13 @@ export async function getMovieDetails(id) {
                     throw new Error(`Movie details fetch failed: ${tmdbId}`);
                 }
 
-                return await response.json();
+                const data = await response.json();
+
+                // Sačuvaj u cache sa oba ID-a
+                movieCache.set(id, data);           // IMDb ID
+                movieCache.set(tmdbId, data);       // TMDB ID
+
+                return data;
             } else {
                 throw new Error(`No movie found for IMDb ID: ${id}`);
             }
@@ -43,7 +57,11 @@ export async function getMovieDetails(id) {
             throw new Error(`Movie details fetch failed: ${id}`);
         }
 
-        return await response.json();
+        const data = await response.json();
+
+        movieCache.set(id, data); // Sačuvaj u cache
+
+        return data;
     } catch (error) {
         console.error(`Error fetching movie ${id}:`, error.message);
         throw error;

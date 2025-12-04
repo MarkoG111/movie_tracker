@@ -11,7 +11,8 @@ export function MovieHeader({
     setSelectedGenre,
     sortBy,
     setSortBy,
-    allGenres
+    allGenres,
+    onApplyFilters,
 }) {
     const location = useLocation();
     const activeTab = location.pathname === "/watched" ? "watched" : "toWatch";
@@ -43,11 +44,10 @@ export function MovieHeader({
                     <div className="flex gap-2 mb-4">
                         <Link
                             to="/toWatch"
-                            className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${
-                                activeTab === "toWatch"
-                                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                                    : "bg-white/5 text-gray-300 hover:bg-white/10"
-                            }`}
+                            className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${activeTab === "toWatch"
+                                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                                : "bg-white/5 text-gray-300 hover:bg-white/10"
+                                }`}
                         >
                             <Play className="inline w-4 h-4 mr-2" />
                             To Watch ({toWatchCount})
@@ -55,11 +55,10 @@ export function MovieHeader({
 
                         <Link
                             to="/watched"
-                            className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${
-                                activeTab === "watched"
-                                    ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white"
-                                    : "bg-white/5 text-gray-300 hover:bg-white/10"
-                            }`}
+                            className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${activeTab === "watched"
+                                ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white"
+                                : "bg-white/5 text-gray-300 hover:bg-white/10"
+                                }`}
                         >
                             <Check className="inline w-4 h-4 mr-2" />
                             Watched ({watchedCount})
@@ -99,6 +98,13 @@ export function MovieHeader({
                                     <option className="bg-slate-900" value="year">Sort by Year</option>
                                     <option className="bg-slate-900" value="rating">Sort by Rating</option>
                                 </select>
+
+                                <button
+                                    onClick={onApplyFilters}
+                                    className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white font-semibold hover:from-purple-600 hover:to-pink-600 transition-all"
+                                >
+                                    Apply Filters
+                                </button>
                             </>
                         )}
                     </div>
