@@ -12,7 +12,6 @@ export default function MovieHeader({
   sortBy,
   setSortBy,
   allGenres,
-  onApplyFilters,
   toWatchCount,
   watchedCount,
 }: MovieHeaderProps) {
@@ -132,7 +131,7 @@ export default function MovieHeader({
               {/* Sort */}
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                onChange={(e) => setSortBy(e.target.value as "title" | "year" | "rating")}
                 className="
                                     px-4 py-2 bg-[#1a1a1d] border border-[#2e2e31]
                                     rounded-xl text-gray-200
@@ -150,18 +149,6 @@ export default function MovieHeader({
                 </option>
               </select>
 
-              <button
-                onClick={onApplyFilters}
-                className="
-                                    px-5 py-2 font-semibold rounded-xl 
-                                    bg-gradient-to-r from-blue-600 to-cyan-600 
-                                    text-white shadow-lg shadow-cyan-500/30
-                                    hover:from-blue-700 hover:to-cyan-700
-                                    transition-all
-                                "
-              >
-                Apply
-              </button>
             </div>
           )}
         </div>

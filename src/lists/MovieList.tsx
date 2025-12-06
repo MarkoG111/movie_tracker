@@ -7,15 +7,25 @@ interface MovieListProps {
   movies: Movie[];
   onToggleStatus: (id: string) => void;
   onRemove: (id: string) => void;
+  isFiltered?: boolean;
 }
 
 export default function MovieList({
   movies,
   onToggleStatus,
   onRemove,
+  isFiltered = false,
 }: MovieListProps) {
   const [visibleCount, setVisibleCount] = useState(18);
   const loaderRef = useRef<HTMLDivElement | null>(null);
+
+  const hasMore = visibleCount < movies.length;
+  const visibleMovies = movies.slice(0, visibleCount);
+
+  // Reset visible count when movies change (new filter applied)
+  useEffect(() => {
+    setVisibleCount(18);
+  }, [movies]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -33,9 +43,20 @@ export default function MovieList({
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [hasMore, isFiltered, movies.length]);
 
-  const visibleMovies = movies.slice(0, visibleCount);
+  // Show different message when filtering
+  if (movies.length === 0) {
+    return (
+      <div className="mx-auto px-4 py-20 text-center">
+        <p className="text-xl text-gray-500">
+          {isFiltered
+            ? "No movies found matching your filters."
+            : "Your list is empty. Add some movies!"}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto px-4 py-10">
@@ -50,12 +71,28 @@ export default function MovieList({
         ))}
       </div>
 
-      <div
-        ref={loaderRef}
-        className="h-10 mt-10 flex justify-center text-gray-400"
-      >
-        Loading more...
-      </div>
+      {/* Conditional rendering based on filters */}
+      {isFiltered ? (
+        // When filtering: no loader, just show all results
+        visibleMovies.length === 0 && movies.length > 0 ? (
+          <div className="mt-10 text-center text-gray-500">
+            No movies match your current filters.
+          </div>
+        ) : null
+      ) : hasMore ? (
+        // Normal infinite scroll: show loader only if more items exist
+        <div
+          ref={loaderRef}
+          className="h-20 mt-10 flex justify-center items-center text-gray-400 text-lg"
+        >
+          Loading more movies...
+        </div>
+      ) : visibleMovies.length > 18 ? (
+        // All loaded, not filtered
+        <div className="mt-10 text-center text-gray-400">
+          You've reached the end!
+        </div>
+      ) : null}
 
       <BackToTopButton />
     </div>

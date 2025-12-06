@@ -8,12 +8,11 @@ export interface MovieHeaderProps {
   selectedGenre: string;
   setSelectedGenre: (value: string) => void;
 
-  sortBy: string;
-  setSortBy: (value: string) => void;
+  // Fix: use literal union type instead of string
+  sortBy: "title" | "year" | "rating";
+  setSortBy: (value: "title" | "year" | "rating") => void;
 
   allGenres: string[];
-
-  onApplyFilters: () => void;
 
   toWatchCount: number;
   watchedCount: number;

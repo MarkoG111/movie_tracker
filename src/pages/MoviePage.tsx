@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import MovieHeader from "../components/movies/MovieHeader";
 import MovieList from "../lists/MovieList";
 import { useMovies } from "../hooks/useMovies";
+import { useFilteredMovies } from "../hooks/useFilteredMovies";
 
 interface MoviePageProps {
   type: "toWatch" | "watched";
@@ -24,10 +25,26 @@ export default function MoviePage({ type }: MoviePageProps) {
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("all");
-  const [sortBy, setSortBy] = useState("title");
+  const [sortBy, setSortBy] = useState<"title" | "year" | "rating">("title");
 
-  const allGenres = ["all"];
-  const onApplyFilters = () => console.log("apply filters");
+  const allGenres = useMemo(() => {
+    const genreSet = new Set<string>();
+    genreSet.add("all");
+
+    [...toWatchMovies, ...watchedMovies].forEach((movie) => {
+      movie.genres.forEach((genre) => genreSet.add(genre));
+    });
+
+    return Array.from(genreSet).sort((a, b) =>
+      a === "all" ? -1 : b === "all" ? 1 : a.localeCompare(b)
+    );
+  }, [toWatchMovies, watchedMovies]);
+
+  const filteredMovies = useFilteredMovies(movies, {
+    searchQuery,
+    selectedGenre,
+    sortBy,
+  });
 
   return (
     <>
@@ -43,13 +60,18 @@ export default function MoviePage({ type }: MoviePageProps) {
         sortBy={sortBy}
         setSortBy={setSortBy}
         allGenres={allGenres}
-        onApplyFilters={onApplyFilters}
       />
 
       <MovieList
-        movies={movies}
+        movies={filteredMovies}
         onToggleStatus={toggle}
         onRemove={removeMovie}
+        isFiltered={
+          searchQuery !== "" ||
+          selectedGenre !== "all" ||
+          sortBy !== "title" ||
+          filteredMovies.length !== movies.length
+        }
       />
     </>
   );
