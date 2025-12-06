@@ -5,15 +5,20 @@ interface MovieCardProps {
   movie: Movie;
   onToggleStatus: (id: string) => void;
   onRemove: (id: string) => void;
+  onClick?: () => void;
 }
 
 export default function MovieCard({
   movie,
   onToggleStatus,
   onRemove,
+  onClick,
 }: MovieCardProps) {
   return (
-    <div className="group relative rounded-xl overflow-hidden bg-[#1a1a1d] border border-[#2a2a2d] hover:border-[#3a3a3d] transition-all shadow-lg hover:shadow-xl">
+    <div
+      onClick={onClick}
+      className="group relative rounded-xl overflow-hidden bg-[#1a1a1d] border border-[#2a2a2d] hover:border-[#3a3a3d] transition-all shadow-lg hover:shadow-xl"
+    >
       {/* Poster */}
       <div className="aspect-[2/3] w-full overflow-hidden bg-black">
         <img
@@ -64,7 +69,10 @@ export default function MovieCard({
         <div className="flex gap-3">
           {/* Toggle */}
           <button
-            onClick={() => onToggleStatus(movie.imdbId)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleStatus(movie.imdbId);
+            }}
             className={`flex-1 py-2 rounded-lg text-white font-medium transition-all duration-200 ${
               movie.status === "toWatch"
                 ? "bg-green-600 hover:bg-green-700"
@@ -76,7 +84,10 @@ export default function MovieCard({
 
           {/* Remove */}
           <button
-            onClick={() => onRemove(movie.imdbId)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove(movie.imdbId);
+            }}
             className="p-2 rounded-lg bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white"
           >
             <X className="w-5 h-5" />
