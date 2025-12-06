@@ -1,14 +1,16 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Movie } from "../types/Movie";
-import { fakeMovies } from "../data/fakeMovies";
 
+import toWatchIds from "../data/toWatch.json";
+import watchedIds from "../data/watched.json";
 interface MoviesProviderProps {
   children: ReactNode;
 }
 
 interface MoviesContextValue {
   movies: Movie[];
-  setMovies: React.Dispatch<React.SetStateAction<Movie[]>>;
+  toWatchMovies: Movie[];
+  watchedMovies: Movie[];
 
   moveToWatched: (id: string) => void;
   moveToToWatch: (id: string) => void;
@@ -18,29 +20,55 @@ interface MoviesContextValue {
 const MoviesContext = createContext<MoviesContextValue | undefined>(undefined);
 
 export function MoviesProvider({ children }: MoviesProviderProps) {
-  const [movies, setMovies] = useState<Movie[]>(fakeMovies);
+  // Convert IMDb IDs -> minimal Movie objects
+  const createMovie = (imdbId: string, status: Movie["status"]): Movie => ({
+    imdbId,
+    title: `Loading… (${imdbId})`,
+    year: 0,
+    runtime: 0,
+    poster: "",
+    genres: [],
+    rating: 0,
+    status,
+  });
 
-  const moveToWatched = (id: string) => {
-    setMovies((prev) =>
-      prev.map((m) => (m.imdbId === id ? { ...m, status: "watched" } : m))
-    );
-  };
+  const [toWatchMovies, setToWatchMovies] = useState<Movie[]>(
+    toWatchIds.map((id) => createMovie(id, "toWatch"))
+  );
 
-  const moveToToWatch = (id: string) => {
-    setMovies((prev) =>
-      prev.map((m) => (m.imdbId === id ? { ...m, status: "toWatch" } : m))
-    );
-  };
+  const [watchedMovies, setWatchedMovies] = useState<Movie[]>(
+    watchedIds.map((id) => createMovie(id, "watched"))
+  );
 
-  const removeMovie = (id: string) => {
-    setMovies((prev) => prev.filter((m) => m.imdbId !== id));
-  };
+  const allMovies = [...toWatchMovies, ...watchedMovies];
+
+  function moveToWatched(id: string) {
+    const movie = toWatchMovies.find((m) => m.imdbId === id);
+    if (!movie) return;
+
+    setToWatchMovies((prev) => prev.filter((m) => m.imdbId !== id));
+    setWatchedMovies((prev) => [...prev, { ...movie, status: "watched" }]);
+  }
+
+  function moveToToWatch(id: string) {
+    const movie = watchedMovies.find((m) => m.imdbId === id);
+    if (!movie) return;
+
+    setWatchedMovies((prev) => prev.filter((m) => m.imdbId !== id));
+    setToWatchMovies((prev) => [...prev, { ...movie, status: "toWatch" }]);
+  }
+
+  function removeMovie(id: string) {
+    setToWatchMovies((prev) => prev.filter((m) => m.imdbId !== id));
+    setWatchedMovies((prev) => prev.filter((m) => m.imdbId !== id));
+  }
 
   return (
     <MoviesContext.Provider
       value={{
-        movies,
-        setMovies,
+        movies: allMovies,
+        toWatchMovies,
+        watchedMovies,
         moveToToWatch,
         moveToWatched,
         removeMovie,
