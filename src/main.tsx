@@ -12,11 +12,11 @@ if (!rootElement) throw new Error("Failed to find the root element");
 // Create a root and render the App
 const root = createRoot(rootElement);
 root.render(
-  <React.StrictMode>
-    <MoviesProvider>
-      <TMDBProvider>
-        <App />
-      </TMDBProvider>
-    </MoviesProvider>
-  </React.StrictMode>
+    <React.StrictMode>
+        <MoviesProvider>
+            <TMDBProvider>
+                <App />
+            </TMDBProvider>
+        </MoviesProvider>
+    </React.StrictMode>
 );
