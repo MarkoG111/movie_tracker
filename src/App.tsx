@@ -4,16 +4,60 @@ import ToWatchPage from "./pages/ToWatchPage";
 import WatchedPage from "./pages/WatchedPage";
 import MovieDetailsPage from "./pages/MovieDetailsPage";
 
+import Signup from "./pages/SignupPage";
+import Login from "./pages/LoginPage";
+
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AuthPages from "./components/layout/AuthPages";
+
 function App() {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<ToWatchPage />} />
-                <Route path="/toWatch" element={<ToWatchPage />} />
-                <Route path="/watched" element={<WatchedPage />} />
-                <Route path="/movie/:id" element={<MovieDetailsPage />} />
-            </Routes>
-        </BrowserRouter>
+        <AuthProvider>
+            <BrowserRouter>
+                <Routes>
+                    {/* Public auth routes */}
+                    <Route path="/auth" element={<AuthPages />} />
+
+                    {/* Protected app routes */}
+                    <Route
+                        path="/"
+                        element={
+                            <ProtectedRoute>
+                                <ToWatchPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/toWatch"
+                        element={
+                            <ProtectedRoute>
+                                <ToWatchPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/watched"
+                        element={
+                            <ProtectedRoute>
+                                <WatchedPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/movie/:id"
+                        element={
+                            <ProtectedRoute>
+                                <MovieDetailsPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                </Routes>
+            </BrowserRouter>
+        </AuthProvider>
     );
 }
 

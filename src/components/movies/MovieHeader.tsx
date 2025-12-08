@@ -1,6 +1,7 @@
-import { Search, Filter, Play, Check } from "lucide-react";
+import { Search, Filter, Play, Check, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { MovieHeaderProps } from "../../types/MovieHeaderProps";
+import { supabase } from "../../lib/supabase";
 
 export default function MovieHeader({
     searchQuery,
@@ -18,6 +19,10 @@ export default function MovieHeader({
     const location = useLocation();
     const activeTab = location.pathname === "/watched" ? "watched" : "toWatch";
 
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+    };
+
     return (
         <header
             className="
@@ -28,17 +33,37 @@ export default function MovieHeader({
             "
         >
             <div className="max-w-7xl mx-auto px-6 py-6">
-                {/* Title */}
-                <h1
-                    className="
-                    text-4xl font-extrabold mb-6
-                    bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 
-                    bg-clip-text text-transparent
-                    drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]
-                "
-                >
-                    🎬 Movie Tracker
-                </h1>
+                {/* Title and Logout Row */}
+                <div className="flex items-center justify-between mb-6">
+                    <h1
+                        className="
+                        text-4xl font-extrabold
+                        bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 
+                        bg-clip-text text-transparent
+                        drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]
+                    "
+                    >
+                        🎬 Movie Tracker
+                    </h1>
+
+                    <button
+                        onClick={handleLogout}
+                        className="
+                            flex items-center gap-2 px-4 py-2
+                            bg-red-600/10 border border-red-500/30
+                            text-red-400 rounded-xl
+                            hover:bg-red-600/20 hover:border-red-500/50
+                            hover:text-red-300
+                            transition-all duration-200
+                            shadow-lg shadow-red-500/10
+                            hover:shadow-red-500/20
+                            group
+                        "
+                    >
+                        <LogOut className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                        <span className="font-medium">Logout</span>
+                    </button>
+                </div>
 
                 {/* Search Input */}
                 <div className="relative mb-6">
