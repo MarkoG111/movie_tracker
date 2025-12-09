@@ -9,6 +9,7 @@ import {
 import { supabase } from "../lib/supabase";
 import { useAuthContext } from "./AuthContext";
 import { Movie } from "../types/Movie";
+import { fetchTMDBDetails, fetchTMDBId } from "../services/tmdbService";
 
 interface MoviesProviderProps {
     children: ReactNode;
@@ -19,7 +20,10 @@ interface MoviesContextValue {
     watchedMovies: Movie[];
     allMovies: Movie[];
     addMovie: (imdbId: string, status: "watched" | "toWatch") => Promise<void>;
-
+    addMovieByIMDb: (
+        imdbId: string,
+        status: "watched" | "toWatch"
+    ) => Promise<void>;
     moveToWatched: (imdbId: string) => Promise<void>;
     moveToToWatch: (imdbId: string) => Promise<void>;
     removeMovie: (imdbId: string) => Promise<void>;
@@ -92,6 +96,63 @@ export function MoviesProvider({ children }: MoviesProviderProps) {
 
         loadMovies();
     }, [userId]);
+
+    async function addMovieByIMDb(
+        imdbInput: string,
+        status: "watched" | "toWatch"
+    ) {
+        const imdbId = imdbInput.match(/tt\d+/)?.[0];
+        if (!imdbId) throw new Error("Invalid IMDB URL or ID");
+
+        const tmdbId = await fetchTMDBId(imdbId);
+        if (!tmdbId) throw new Error("Movie not found on TMDB");
+
+        const details = await fetchTMDBDetails(tmdbId);
+        if (!details) throw new Error("TMDB details missing");
+
+        // 1. Persist movie metadata
+        const { error: detailsError } = await supabase
+            .from("movie_details")
+            .upsert({
+                imdb_id: imdbId,
+                title: details.title,
+                year: details.year,
+                poster: details.poster,
+                genres: details.genres,
+                runtime: details.runtime,
+                rating: details.rating,
+                overview: details.overview,
+            });
+
+        if (detailsError) {
+            // Detect conflict explicitly
+            if (detailsError.code === "23505" || detailsError.code === "409") {
+                console.warn("Movie metadata already exists — continuing.");
+            } else {
+                throw new Error(
+                    "Failed to save movie details: " + detailsError.message
+                );
+            }
+        }
+
+        // 2. Insert into user library
+        const { error: movieError } = await supabase.from("movies").insert({
+            user_id: userId,
+            imdb_id: imdbId,
+            status,
+        });
+
+        if (movieError) {
+            if (movieError.code === "23505" || movieError.code === "409") {
+                throw new Error("This movie is already in your library.");
+            } else {
+                throw new Error("Failed to save movie: " + movieError.message);
+            }
+        }
+
+        // 3. Refresh local list
+        await loadMovies();
+    }
 
     // Add movie
     async function addMovie(imdbId: string, status: "watched" | "toWatch") {
@@ -171,6 +232,7 @@ export function MoviesProvider({ children }: MoviesProviderProps) {
                 toWatchMovies,
                 watchedMovies,
                 addMovie,
+                addMovieByIMDb,
                 moveToWatched,
                 moveToToWatch,
                 removeMovie,

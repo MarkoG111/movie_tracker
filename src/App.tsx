@@ -7,11 +7,14 @@ import MovieDetailsPage from "./pages/MovieDetailsPage";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthPages from "./components/layout/AuthPages";
+import ToastContainer from "./components/ui/ToastContainer";
 
 function App() {
     return (
         <AuthProvider>
             <BrowserRouter>
+                <ToastContainer />
+                
                 <Routes>
                     {/* Public auth routes */}
                     <Route path="/auth" element={<AuthPages />} />
