@@ -9,6 +9,7 @@
         "migrate": "node scripts/migrateToSupabase.mjs",
         "dict": "node scripts/buildMovieDict.mjs",
         "rebuild-dict": "node scripts/rebuildMoviesDict.mjs",
+        "migrate-details": "node scripts/migrateMovieDetailsToSupabase.mjs",
         "build": "npm run prefetch && vite build",
         "lint": "eslint .",
         "preview": "vite preview"

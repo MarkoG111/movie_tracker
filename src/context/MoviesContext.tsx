@@ -8,9 +8,7 @@ import {
 
 import { supabase } from "../lib/supabase";
 import { useAuthContext } from "./AuthContext";
-import { Movie, MovieDictionary } from "../types/Movie";
-
-import moviesDict from "../data/moviesDict.json";
+import { Movie } from "../types/Movie";
 
 interface MoviesProviderProps {
     children: ReactNode;
@@ -21,6 +19,7 @@ interface MoviesContextValue {
     watchedMovies: Movie[];
     allMovies: Movie[];
     addMovie: (imdbId: string, status: "watched" | "toWatch") => Promise<void>;
+
     moveToWatched: (imdbId: string) => Promise<void>;
     moveToToWatch: (imdbId: string) => Promise<void>;
     removeMovie: (imdbId: string) => Promise<void>;
@@ -28,68 +27,27 @@ interface MoviesContextValue {
 
 const MoviesContext = createContext<MoviesContextValue | null>(null);
 
-// Cast the imported JSON to the expected type to allow proper string indexing
-const movieData: MovieDictionary = moviesDict as MovieDictionary;
-
 export function MoviesProvider({ children }: MoviesProviderProps) {
     const { user } = useAuthContext();
 
     const [movies, setMovies] = useState<Movie[]>([]);
     const userId = user?.id;
 
-    // Load user's movie list from Supabase
-    useEffect(() => {
-        if (!userId) {
-            setMovies([]);
-            return;
-        }
-
-        async function loadMovies() {
-            const data = await fetchAllMovies(userId!);
-
-            // Merge Supabase rows with local TMDB data
-            const fullMovies = data
-                .map((row) => {
-                    const details = movieData[row.imdb_id];
-                    if (!details) {
-                        return null;
-                    }
-
-                    return {
-                        ...details,
-                        imdbId: details.imdbId,
-                        status: row.status,
-                    } as Movie;
-                })
-                .filter((m): m is Movie => {
-                    if (!m) {
-                        console.warn("MISSING MOVIE DETAILS FOR: ", m);
-                        return false;
-                    }
-                    return true;
-                });
-
-            setMovies(fullMovies);
-        }
-
-        loadMovies();
-    }, [userId]);
-
-    async function fetchAllMovies(userId: string) {
+    async function loadMovies() {
         const pageSize = 1000;
         let from = 0;
-        let all = [];
+        let allRows: any[] = [];
 
         while (true) {
             const { data, error } = await supabase
                 .from("movies")
-                .select("imdb_id, status", { count: "exact" })
+                .select(`imdb_id, status, details:movie_details(*)`)
                 .eq("user_id", userId)
                 .order("created_at", { ascending: true })
                 .range(from, from + pageSize - 1);
 
             if (error) {
-                console.error("Supabase pagination error:", error);
+                console.error("Error loading movies:", error);
                 break;
             }
 
@@ -97,7 +55,7 @@ export function MoviesProvider({ children }: MoviesProviderProps) {
                 break;
             }
 
-            all.push(...data);
+            allRows.push(...data);
 
             if (data.length < pageSize) {
                 break; // last page
@@ -106,8 +64,34 @@ export function MoviesProvider({ children }: MoviesProviderProps) {
             from += pageSize;
         }
 
-        return all;
+        // Map rows to Movie type
+        const fullMovies = allRows.map((row) => {
+            const d = row.details;
+
+            return {
+                imdbId: row.imdb_id,
+                status: row.status,
+                title: d?.title ?? "",
+                year: d?.year ?? "",
+                poster: d?.poster ?? null,
+                genres: d?.genres ?? [],
+                runtime: d?.runtime ?? null,
+                rating: d?.rating ?? null,
+            };
+        });
+
+        setMovies(fullMovies);
     }
+
+    // Load user's movie list from Supabase
+    useEffect(() => {
+        if (!userId) {
+            setMovies([]);
+            return;
+        }
+
+        loadMovies();
+    }, [userId]);
 
     // Add movie
     async function addMovie(imdbId: string, status: "watched" | "toWatch") {
@@ -121,12 +105,7 @@ export function MoviesProvider({ children }: MoviesProviderProps) {
             status,
         });
 
-        const d = movieData[imdbId];
-        if (!d) {
-            return;
-        }
-
-        setMovies((prev: Movie[]) => [...prev, { ...d, status }]);
+        await loadMovies();
     }
 
     // Move to watched
