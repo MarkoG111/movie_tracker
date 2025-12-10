@@ -30,11 +30,12 @@ Movie details (cast, posters, overview, rating, images) come from TMDB.
 - Sort by title, year, or rating
 
 # 🛠️ Tech Stack
-- React + TypeScript
-- TailwindCSS
-- Supabase Auth & Database
-- TMDB API
-- Vite
+- React <img src="https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB&style=for-the-badge" />
+- TypeScript  <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white&style=for-the-badge" />
+- TailwindCSS  <img src="https://img.shields.io/badge/TailwindCSS-06B6D4?logo=tailwindcss&logoColor=white&style=for-the-badge" />
+- Supabase Auth & Database  <img src="https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white&style=for-the-badge" />
+- TMDB API  <img src="https://img.shields.io/badge/TMDB-01D277?logo=tmdb&logoColor=white&style=for-the-badge" />
+- Vite  <img src="https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white&style=for-the-badge" />
 
 # 📦 Installation
 ```bash
