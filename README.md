@@ -1,16 +1,53 @@
-# React + Vite
+# 🎬 Movie Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Movie Tracker is a personal movie tracking app built with React, TypeScript, Supabase, and TailwindCSS. <br/> 
+Users can log in, add movies by IMDb ID or URL, and manage watched and to-watch lists. <br/>
+Movie details (cast, posters, overview, rating, images) come from TMDB.
 
-Currently, two official plugins are available:
+# 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🔐 Authentication
+- Email/password login using Supabase
+- Protected routes
+- Each user has their own private movie library
 
-## React Compiler
+## 🎬 Movie Management
+- Add movies using IMDb ID or URL
+- TMDB is used to fetch rich metadata
+- Movies stored in Supabase:
+1. movie_details - global metadata
+2. movies - user-specific list (watched / toWatch)
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+## 📚 Lists
+- To-Watch list
+- Watched list
+- Move movies between lists
+- Remove movies
 
-## Expanding the ESLint configuration
+## 🔍 Filtering & Search
+- Search by title
+- Filter by genre
+- Sort by title, year, or rating
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# 🛠️ Tech Stack
+- React + TypeScript
+- TailwindCSS
+- Supabase Auth & Database
+- TMDB API
+- Vite
+
+# 📦 Installation
+```bash
+git clone https://github.com/YOUR_USERNAME/MovieTracker.git
+cd my_movies
+npm install
+npm run dev
+```
+
+Create a .env file:
+```env
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+VITE_TMDB_API_KEY=
+VITE_TMDB_BASE_URL=https://api.themoviedb.org/3
+```
