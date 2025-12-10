@@ -69,7 +69,6 @@ export default function MoviePage({ type }: MoviePageProps) {
                 isFiltered={
                     searchQuery !== "" ||
                     selectedGenre !== "all" ||
-                    sortBy !== "title" ||
                     filteredMovies.length !== movies.length
                 }
             />

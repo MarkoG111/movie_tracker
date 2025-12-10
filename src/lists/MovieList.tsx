@@ -29,23 +29,22 @@ export default function MovieList({
 
     // Infinite scroll observer
     useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting) {
-                    setVisibleCount((prev) => prev + 18);
-                }
-            },
-            { threshold: 0.5 }
-        );
+        if (!hasMore) return; // nothing more to load
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                setVisibleCount((prev) => prev + 18);
+            }
+        });
 
         if (loaderRef.current) {
             observer.observe(loaderRef.current);
         }
 
         return () => observer.disconnect();
-    }, [hasMore, isFiltered, movies.length]);
+    }, [hasMore, movies]);
 
-    // Show different message when filtering
+    // Empty state
     if (movies.length === 0) {
         return (
             <div className="mx-auto px-4 py-20 text-center">
@@ -71,16 +70,8 @@ export default function MovieList({
                 ))}
             </div>
 
-            {/* Conditional rendering based on filters */}
-            {isFiltered ? (
-                // When filtering: no loader, just show all results
-                visibleMovies.length === 0 && movies.length > 0 ? (
-                    <div className="mt-10 text-center text-gray-500">
-                        No movies match your current filters.
-                    </div>
-                ) : null
-            ) : hasMore ? (
-                // Normal infinite scroll: show loader only if more items exist
+            {/* Loader is now independent of filters */}
+            {hasMore ? (
                 <div
                     ref={loaderRef}
                     className="h-20 mt-10 flex justify-center items-center text-gray-400 text-lg"
@@ -88,7 +79,6 @@ export default function MovieList({
                     Loading more movies...
                 </div>
             ) : visibleMovies.length > 18 ? (
-                // All loaded, not filtered
                 <div className="mt-10 text-center text-gray-400">
                     You've reached the end!
                 </div>
