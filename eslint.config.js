@@ -25,5 +25,9 @@ export default defineConfig([
         rules: {
             'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
         },
+        plugins: [react()],
+        build: {
+            outDir: 'dist'
+        }
     },
 ])
