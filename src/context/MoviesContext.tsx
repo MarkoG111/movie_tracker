@@ -4,6 +4,7 @@ import {
     useState,
     ReactNode,
     useEffect,
+    useMemo,
 } from "react";
 
 import { supabase } from "../lib/supabase";
@@ -222,8 +223,8 @@ export function MoviesProvider({ children }: MoviesProviderProps) {
         setMovies((prev) => prev.filter((m) => m.imdbId !== imdbId));
     }
 
-    const toWatchMovies = movies.filter((m) => m.status === "toWatch");
-    const watchedMovies = movies.filter((m) => m.status === "watched");
+    const toWatchMovies = useMemo(() => movies.filter((m) => m.status === "toWatch"), [movies]);
+    const watchedMovies = useMemo(() => movies.filter((m) => m.status === "watched"), [movies]);
 
     return (
         <MoviesContext.Provider

@@ -25,7 +25,7 @@ export default function MovieList({
     // Reset visible count when movies change (new filter applied)
     useEffect(() => {
         setVisibleCount(18);
-    }, [movies]);
+    }, [movies.length]);
 
     // Infinite scroll observer
     useEffect(() => {
