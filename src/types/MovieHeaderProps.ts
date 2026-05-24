@@ -16,4 +16,6 @@ export interface MovieHeaderProps {
 
     toWatchCount: number;
     watchedCount: number;
+
+    onLogoClick: () => void;
 }

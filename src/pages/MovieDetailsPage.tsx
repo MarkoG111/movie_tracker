@@ -10,10 +10,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MovieDetails } from "../types/MovieDetails";
 import { useTMDB } from "../context/TMDBContext";
-
 export default function MovieDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+
+    const goBack = () => {
+        navigate(-1);
+    };
 
     const { getDetails } = useTMDB();
 
@@ -73,7 +76,7 @@ export default function MovieDetailsPage() {
                 {/* Header */}
                 <div className="relative z-10 p-6">
                     <button
-                        onClick={() => navigate(-1)}
+                        onClick={goBack}
                         className="flex items-center gap-2 text-white hover:text-purple-400 transition-colors mb-8"
                     >
                         <ArrowLeft className="w-5 h-5" />

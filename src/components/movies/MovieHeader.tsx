@@ -17,6 +17,7 @@ export default function MovieHeader({
     allGenres,
     toWatchCount,
     watchedCount,
+    onLogoClick,
 }: MovieHeaderProps) {
     const location = useLocation();
     const activeTab = location.pathname === "/watched" ? "watched" : "toWatch";
@@ -40,16 +41,20 @@ export default function MovieHeader({
                 <div className="max-w-7xl mx-auto px-6 py-6">
                     {/* Title and Logout Row */}
                     <div className="flex items-center justify-between mb-6">
-                        <h1
+                        <button
+                            type="button"
+                            onClick={onLogoClick}
+                            title="Reset to home"
                             className="
                         text-4xl font-extrabold
                         bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 
                         bg-clip-text text-transparent
                         drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]
+                        cursor-pointer hover:opacity-80 transition-opacity
                     "
                         >
                             🎬 Movie Tracker
-                        </h1>
+                        </button>
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => setShowCreateModal(true)}

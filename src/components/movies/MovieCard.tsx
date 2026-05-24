@@ -16,8 +16,11 @@ export default function MovieCard({
 }: MovieCardProps) {
     return (
         <div
+            data-movie-id={movie.imdbId}
             onClick={onClick}
-            className="group relative rounded-xl overflow-hidden bg-[#1a1a1d] border border-[#2a2a2d] hover:border-[#3a3a3d] transition-all shadow-lg hover:shadow-xl"
+            className={`group relative rounded-xl overflow-hidden bg-[#1a1a1d] border border-[#2a2a2d] hover:border-[#3a3a3d] transition-all shadow-lg hover:shadow-xl ${
+                onClick ? "cursor-pointer" : ""
+            }`}
         >
             {/* Poster */}
             <div className="aspect-[2/3] w-full overflow-hidden bg-black">
