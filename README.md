@@ -4,6 +4,10 @@ Movie Tracker is a personal movie tracking app built with React, TypeScript, Sup
 Users can log in, add movies by IMDb ID or URL, and manage watched and to-watch lists. <br/>
 Movie details (cast, posters, overview, rating, images) come from TMDB.
 
+👨‍💻 Demo Account: <br/>
+Email: marec.ict@gmail.com <br/>
+Password: gacanovic07
+
 # 🚀 Features
 
 ## 🔐 Authentication
